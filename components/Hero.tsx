@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, Variants } from 'framer-motion';
 import { ArrowDown } from 'lucide-react';
 import { Section } from '../types';
 
@@ -11,8 +11,9 @@ const Hero: React.FC<HeroProps> = ({ scrollToSection }) => {
   const { scrollY } = useScroll();
   const y1 = useTransform(scrollY, [0, 500], [0, 200]);
   const y2 = useTransform(scrollY, [0, 500], [0, -150]);
+  const textY = useTransform(scrollY, [0, 500], [0, 100]);
 
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -23,7 +24,7 @@ const Hero: React.FC<HeroProps> = ({ scrollToSection }) => {
     },
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { y: 100, opacity: 0, rotate: 5 },
     visible: {
       y: 0,
@@ -38,7 +39,7 @@ const Hero: React.FC<HeroProps> = ({ scrollToSection }) => {
   };
 
   return (
-    <section className="relative h-screen w-full flex flex-col justify-center items-center overflow-hidden px-4">
+    <section className="relative h-screen w-full flex flex-col justify-center items-center overflow-hidden bg-[#050505]">
       {/* Abstract Background Elements */}
       <motion.div 
         style={{ y: y1, opacity: 0.4 }}
@@ -53,15 +54,16 @@ const Hero: React.FC<HeroProps> = ({ scrollToSection }) => {
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="z-10 text-center flex flex-col items-center"
+        style={{ y: textY }}
+        className="z-10 text-center flex flex-col items-center px-4"
       >
         <motion.div variants={itemVariants} className="mb-4">
-          <span className="inline-block px-3 py-1 rounded-full border border-white/10 bg-white/5 text-xs tracking-widest uppercase text-zinc-400">
+          <span className="inline-block px-4 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-md text-xs tracking-[0.2em] uppercase text-zinc-400 font-medium">
             Available for commissions
           </span>
         </motion.div>
 
-        <motion.h1 variants={itemVariants} className="font-display text-6xl md:text-8xl lg:text-9xl font-bold tracking-tighter text-white mb-6">
+        <motion.h1 variants={itemVariants} className="font-display text-6xl md:text-8xl lg:text-9xl font-bold tracking-tighter text-white mb-6 leading-[0.9]">
           <span className="block">Visual</span>
           <span className="block text-zinc-500">Designer</span>
         </motion.h1>
@@ -75,21 +77,52 @@ const Hero: React.FC<HeroProps> = ({ scrollToSection }) => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => scrollToSection(Section.WORK)}
-          className="group flex items-center gap-2 bg-white text-black px-8 py-4 rounded-full font-medium text-lg"
+          className="group flex items-center gap-2 bg-white text-black px-8 py-4 rounded-full font-medium text-lg shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.5)] transition-shadow duration-300"
         >
           View Portfolio
           <ArrowDown className="w-5 h-5 group-hover:translate-y-1 transition-transform" />
         </motion.button>
       </motion.div>
 
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.5, duration: 1 }}
-        className="absolute bottom-10 left-10 hidden md:block"
-      >
-        <p className="text-zinc-600 text-sm transform -rotate-90 origin-bottom-left">SCROLL TO EXPLORE</p>
-      </motion.div>
+      {/* Infinite Marquee */}
+      <div className="absolute bottom-12 w-full overflow-hidden whitespace-nowrap opacity-30 pointer-events-none">
+        <motion.div
+          animate={{ x: [0, -1000] }}
+          transition={{
+            repeat: Infinity,
+            ease: "linear",
+            duration: 20,
+          }}
+          className="inline-block"
+        >
+          {Array(4).fill("").map((_, i) => (
+             <span key={i} className="text-6xl font-display font-bold text-transparent stroke-text mx-8">
+               BRANDING — ART DIRECTION — UI/UX — MOTION — 
+             </span>
+          ))}
+        </motion.div>
+        <motion.div
+          animate={{ x: [0, -1000] }}
+          transition={{
+            repeat: Infinity,
+            ease: "linear",
+            duration: 20,
+          }}
+          className="inline-block"
+        >
+           {Array(4).fill("").map((_, i) => (
+             <span key={i} className="text-6xl font-display font-bold text-transparent stroke-text mx-8">
+               BRANDING — ART DIRECTION — UI/UX — MOTION — 
+             </span>
+          ))}
+        </motion.div>
+      </div>
+
+      <style>{`
+        .stroke-text {
+          -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
+        }
+      `}</style>
     </section>
   );
 };
